@@ -3,6 +3,7 @@
 
 #define WIDTH 900
 #define HEIGHT 600
+#define RAYS_NUMBER 100
 
 #define COLOR_WHITE 0xffffffff
 #define COLOR_BLACK 0x00000000
@@ -11,6 +12,11 @@ struct Circle {
   double x;
   double y;
   double r;
+};
+
+struct Ray {
+    double x_start, y_start;
+    double angke;
 };
 
 void FillCircle(SDL_Surface *surface, struct Circle circle, Uint32 color) {
@@ -26,6 +32,16 @@ void FillCircle(SDL_Surface *surface, struct Circle circle, Uint32 color) {
   }
 }
 
+void generate_rays(struct Circle circle, struct Ray rays[RAYS_NUMBER]) {
+    for (int i = 0; i < RAYS_NUMBER; i++) {
+        double angle = ((double) i / RAYS_NUMBER) * 2 * M_PI;
+        struct Ray ray = {circle.x, circle.y, angle};
+        rays[i] = ray;
+        printf("angle: %f\n", angle);
+
+    }
+}
+
 int main() {
   SDL_Init(SDL_INIT_VIDEO);
   unsigned int placeholder = SDL_WINDOWPOS_CENTERED;
@@ -37,6 +53,8 @@ int main() {
   struct Circle shadow_circle = {500, 350, 150};
   SDL_Rect erase_rect = {0, 0, WIDTH, HEIGHT};
 
+  struct Ray rays[RAYS_NUMBER];
+
   int semulation_running = 1;
   SDL_Event event;
   while (semulation_running) {
@@ -47,6 +65,7 @@ int main() {
       if (event.type == SDL_MOUSEMOTION && event.motion.state != 0) {
         circle.x = event.motion.x;
         circle.y = event.motion.y;
+        generate_rays(circle, rays);
       }
     }
 
